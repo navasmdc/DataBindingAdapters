@@ -8,12 +8,35 @@ import android.widget.BaseAdapter
 /**
  * Simple adaptar that implements databinding to bind every item from list with his item view
  */
-class DataBindingAdapter<T>(
+class DataBindingAdapter<T : Any?>(
         var context : Context,
-        var list : MutableList<*>,
+        var list : List<*>,
         var itemLayout : Int,
         var itemClickListener : OnItemClickListener<T>? = null
-        ) : BaseAdapter() {
+        ) : BaseAdapter(), ObservableList.OnListChangedListener<T>{
+
+    init {
+        if(list is ObservableList<*>)
+            (list as ObservableList<T>).addListener(this)
+    }
+
+    override fun onItemChanged(position : Int,
+                               item : T
+    ) {
+        notifyDataSetChanged()
+    }
+
+    override fun onItemRemoved(position : Int,
+                               item : T
+    ) {
+        notifyDataSetChanged()
+    }
+
+    override fun onItemAdded(position : Int,
+                             item : T
+    ) {
+        notifyDataSetChanged()
+    }
 
     override fun getView(position : Int,
                          recyclerView : View?,

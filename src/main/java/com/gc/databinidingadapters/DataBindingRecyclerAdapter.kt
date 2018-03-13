@@ -10,8 +10,30 @@ class DataBindingRecyclerAdapter<T>(
         var list : MutableList<*>,
         var itemLayout : Int,
         var itemClickListener : OnItemClickListener<T>? = null
-) : RecyclerView.Adapter<DataBindingRecyclerViewHolder>()
-{
+) : RecyclerView.Adapter<DataBindingRecyclerViewHolder>(), ObservableList.OnListChangedListener<T>{
+
+    init {
+        if(list is ObservableList<*>)
+            (list as ObservableList<T>).addListener(this)
+    }
+
+    override fun onItemChanged(position : Int,
+                               item : T
+    ) {
+        notifyItemChanged(position)
+    }
+
+    override fun onItemRemoved(position : Int,
+                               item : T
+    ) {
+        notifyItemRemoved(position)
+    }
+
+    override fun onItemAdded(position : Int,
+                             item : T
+    ) {
+        notifyItemInserted(position)
+    }
     override fun onCreateViewHolder(parent : ViewGroup?,
                                     viewType : Int
     ) : DataBindingRecyclerViewHolder {

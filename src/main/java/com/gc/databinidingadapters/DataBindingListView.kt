@@ -7,11 +7,11 @@ import android.widget.ListView
 class DataBindingListView(context : Context, attrs : AttributeSet)
     : ListView(context, attrs) {
 
-    var data : MutableList<*>? = null
+    var data : List<*>? = null
         set(value){
             field = value
             if(value != null && itemLayout != -1)
-                adapter = DataBindingAdapter(context, data as MutableList<*>, itemLayout, onItemClickListener as com.gc.databinidingadapters.OnItemClickListener<Any>?)
+                adapter = DataBindingAdapter<Any>(context, data as MutableList<*>, itemLayout, onItemClickListener as com.gc.databinidingadapters.OnItemClickListener<Any>?)
         }
     var itemLayout : Int = -1
 
