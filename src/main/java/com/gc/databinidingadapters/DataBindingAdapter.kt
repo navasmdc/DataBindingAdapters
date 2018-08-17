@@ -1,62 +1,60 @@
 package com.gc.databinidingadapters
 
-import android.content.Context
-import android.databinding.*
-import android.view.*
+import android.databinding.DataBindingUtil
+import android.databinding.ViewDataBinding
+import android.view.View
+import android.view.ViewGroup
 import android.widget.BaseAdapter
 
 /**
  * Simple adaptar that implements databinding to bind every item from list with his item view
  */
-class DataBindingAdapter<T : Any?>(
-        var context : Context,
-        var list : List<*>,
-        var itemLayout : Int,
-        var itemClickListener : OnItemClickListener<T>? = null
+class DataBindingAdapter<T>(
+        private val list : List<T>,
+        private val itemLayout : Int,
+        _itemClickListener : OnItemClickListener<T>? = null
         ) : BaseAdapter(), ObservableList.OnListChangedListener<T>{
 
+    var itemClickListener : OnItemClickListener<T>? = _itemClickListener
+
     init {
-        if(list is ObservableList<*>)
-            (list as ObservableList<T>).addListener(this)
+        (list as? ObservableList<T>)?.addListener(this)
     }
 
     override fun onItemChanged(position : Int,
                                item : T
-    ) {
-        notifyDataSetChanged()
-    }
+    ) = notifyDataSetChanged()
 
     override fun onItemRemoved(position : Int,
                                item : T
-    ) {
-        notifyDataSetChanged()
-    }
+    ) = notifyDataSetChanged()
 
     override fun onItemAdded(position : Int,
                              item : T
-    ) {
-        notifyDataSetChanged()
-    }
+    ) = notifyDataSetChanged()
 
     override fun getView(position : Int,
                          recyclerView : View?,
-                         p2 : ViewGroup?
+                         parent : ViewGroup
     ) : View {
-        var view = recyclerView
-        val binding : ViewDataBinding
-        if(view != null) binding = view.tag as ViewDataBinding
-        else{
-            binding = DataBindingUtil.inflate(LayoutInflater.from(context), itemLayout, null, false)
-            view = binding.root
-            view.tag = binding
-        }
+        val binding : ViewDataBinding =
+                if(recyclerView != null) recyclerView.tag as ViewDataBinding
+                else {
+                    with(parent.inflate(itemLayout)) {
+                        DataBindingUtil.bind<ViewDataBinding>(this).apply {
+                            root.tag = this
+                            setVariable(BR.viewModel, getItem(position))
+                        }
+                    }
+                }
         binding.setVariable(BR.viewModel, getItem(position))
-        if(itemClickListener != null)
-            view?.setOnClickListener { itemClickListener?.onItemClick(getItem(position)) }
-        return view!!
+        return binding.root.also {
+            if(itemClickListener != null)
+                it.setOnClickListener { itemClickListener?.onItemClick(getItem(position)) }
+        }
     }
 
-    override fun getItem(position : Int) : T = list[position] as T
+    override fun getItem(position : Int) : T = list[position]
 
     override fun getItemId(position : Int) : Long = position.toLong()
 
