@@ -12,26 +12,18 @@ import android.widget.BaseAdapter
 class DataBindingAdapter<T>(
         private val list : List<T>,
         private val itemLayout : Int,
-        _itemClickListener : OnItemClickListener<T>? = null
+        var itemClickListener : OnItemClickListener<T>? = null
         ) : BaseAdapter(), ObservableList.OnListChangedListener<T>{
-
-    var itemClickListener : OnItemClickListener<T>? = _itemClickListener
 
     init {
         (list as? ObservableList<T>)?.addListener(this)
     }
 
-    override fun onItemChanged(position : Int,
-                               item : T
-    ) = notifyDataSetChanged()
+    override fun onItemChanged(position : Int, item : T) = notifyDataSetChanged()
 
-    override fun onItemRemoved(position : Int,
-                               item : T
-    ) = notifyDataSetChanged()
+    override fun onItemRemoved(position : Int, item : T) = notifyDataSetChanged()
 
-    override fun onItemAdded(position : Int,
-                             item : T
-    ) = notifyDataSetChanged()
+    override fun onItemAdded(position : Int, item : T) = notifyDataSetChanged()
 
     override fun getView(position : Int,
                          recyclerView : View?,

@@ -13,7 +13,7 @@ class DataBindingRecyclerView(context : Context, attrs : AttributeSet)
 
     var data : MutableList<Any>? = null
         set(value){
-            data = value
+            field = value
             if(value != null && itemLayout != -1)
                 adapter = DataBindingRecyclerAdapter(value, itemLayout, onItemClickListener as OnItemClickListener<Any>?)
     }
@@ -42,12 +42,4 @@ class DataBindingRecyclerView(context : Context, attrs : AttributeSet)
             styleAttributes.recycle()
         }
     }
-
-//    fun setData(data : MutableList<*>) {
-//        this.data = data
-//        if (itemLayout != -1) {
-//            adapter = DataBindingRecyclerAdapter(data, context, itemLayout, onItemClickListener)
-//        }
-//    }
-
 }
